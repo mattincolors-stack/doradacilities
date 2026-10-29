@@ -142,3 +142,30 @@
     color: var(--color-foreground);
   }
 }
+
+/* site-import tokens: begin (generated; re-import replaces this block) */
+/* Imported clone roles use prefixed Tailwind utilities
+   (bg-site-import-primary, text-site-import-foreground, …); edit the
+   --site-import-* variables to restyle the clone. Unprefixed roles theme new UI. */
+:root {
+  --background: oklch(1 0 0);
+  --site-import-background: oklch(1 0 0);
+  --foreground: oklch(0 0 0);
+  --site-import-foreground: oklch(0 0 0);
+  --border: oklch(0.9251 0.00418 157.17);
+  --site-import-border: oklch(0.9251 0.00418 157.17);
+  --muted-foreground: oklch(0.62335 0.01468 159.68);
+  --site-import-muted-foreground: oklch(0.62335 0.01468 159.68);
+}
+/* Design tokens captured from the imported site, registered as Tailwind
+   utilities (bg-<name>, text-<name>, font-<name>). var() values live in
+   the imported stylesheet's :root. */
+@theme inline {
+  --font-sans: "Times New Roman";
+  --color-site-import-background: var(--site-import-background);
+  --color-site-import-foreground: var(--site-import-foreground);
+  --color-site-import-border: var(--site-import-border);
+  --color-site-import-muted-foreground: var(--site-import-muted-foreground);
+  --font-expo-router-tabs-font-family: var(--expo-router-tabs-font-family);
+}
+/* site-import tokens: end */
