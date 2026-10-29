@@ -10,33 +10,133 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedConfiguracoesRouteImport } from './routes/_authenticated/configuracoes'
+import { Route as AuthenticatedProdutosRouteImport } from './routes/_authenticated/produtos'
+import { Route as AuthenticatedRelatoriosRouteImport } from './routes/_authenticated/relatorios'
+import { Route as AuthenticatedPedidosIndexRouteImport } from './routes/_authenticated/pedidos.index'
+import { Route as AuthenticatedPedidosIdRouteImport } from './routes/_authenticated/pedidos.$id'
+import { Route as AuthenticatedPedidosNovoRouteImport } from './routes/_authenticated/pedidos.novo'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedConfiguracoesRoute =
+  AuthenticatedConfiguracoesRouteImport.update({
+    id: '/configuracoes',
+    path: '/configuracoes',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedProdutosRoute = AuthenticatedProdutosRouteImport.update({
+  id: '/produtos',
+  path: '/produtos',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedRelatoriosRoute = AuthenticatedRelatoriosRouteImport.update({
+  id: '/relatorios',
+  path: '/relatorios',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedPedidosIndexRoute =
+  AuthenticatedPedidosIndexRouteImport.update({
+    id: '/pedidos/',
+    path: '/pedidos/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedPedidosIdRoute = AuthenticatedPedidosIdRouteImport.update({
+  id: '/pedidos/$id',
+  path: '/pedidos/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedPedidosNovoRoute =
+  AuthenticatedPedidosNovoRouteImport.update({
+    id: '/pedidos/novo',
+    path: '/pedidos/novo',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/configuracoes': typeof AuthenticatedConfiguracoesRoute
+  '/produtos': typeof AuthenticatedProdutosRoute
+  '/relatorios': typeof AuthenticatedRelatoriosRoute
+  '/pedidos/$id': typeof AuthenticatedPedidosIdRoute
+  '/pedidos/novo': typeof AuthenticatedPedidosNovoRoute
+  '/pedidos/': typeof AuthenticatedPedidosIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/configuracoes': typeof AuthenticatedConfiguracoesRoute
+  '/produtos': typeof AuthenticatedProdutosRoute
+  '/relatorios': typeof AuthenticatedRelatoriosRoute
+  '/pedidos/$id': typeof AuthenticatedPedidosIdRoute
+  '/pedidos/novo': typeof AuthenticatedPedidosNovoRoute
+  '/pedidos': typeof AuthenticatedPedidosIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/_authenticated/configuracoes': typeof AuthenticatedConfiguracoesRoute
+  '/_authenticated/produtos': typeof AuthenticatedProdutosRoute
+  '/_authenticated/relatorios': typeof AuthenticatedRelatoriosRoute
+  '/_authenticated/pedidos/$id': typeof AuthenticatedPedidosIdRoute
+  '/_authenticated/pedidos/novo': typeof AuthenticatedPedidosNovoRoute
+  '/_authenticated/pedidos/': typeof AuthenticatedPedidosIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/configuracoes'
+    | '/produtos'
+    | '/relatorios'
+    | '/pedidos/$id'
+    | '/pedidos/novo'
+    | '/pedidos/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/configuracoes'
+    | '/produtos'
+    | '/relatorios'
+    | '/pedidos/$id'
+    | '/pedidos/novo'
+    | '/pedidos'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/_authenticated/configuracoes'
+    | '/_authenticated/produtos'
+    | '/_authenticated/relatorios'
+    | '/_authenticated/pedidos/$id'
+    | '/_authenticated/pedidos/novo'
+    | '/_authenticated/pedidos/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +148,90 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/configuracoes': {
+      id: '/_authenticated/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/configuracoes'
+      preLoaderRoute: typeof AuthenticatedConfiguracoesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/produtos': {
+      id: '/_authenticated/produtos'
+      path: '/produtos'
+      fullPath: '/produtos'
+      preLoaderRoute: typeof AuthenticatedProdutosRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/relatorios': {
+      id: '/_authenticated/relatorios'
+      path: '/relatorios'
+      fullPath: '/relatorios'
+      preLoaderRoute: typeof AuthenticatedRelatoriosRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/pedidos/': {
+      id: '/_authenticated/pedidos/'
+      path: '/pedidos'
+      fullPath: '/pedidos/'
+      preLoaderRoute: typeof AuthenticatedPedidosIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/pedidos/$id': {
+      id: '/_authenticated/pedidos/$id'
+      path: '/pedidos/$id'
+      fullPath: '/pedidos/$id'
+      preLoaderRoute: typeof AuthenticatedPedidosIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/pedidos/novo': {
+      id: '/_authenticated/pedidos/novo'
+      path: '/pedidos/novo'
+      fullPath: '/pedidos/novo'
+      preLoaderRoute: typeof AuthenticatedPedidosNovoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedConfiguracoesRoute: typeof AuthenticatedConfiguracoesRoute
+  AuthenticatedProdutosRoute: typeof AuthenticatedProdutosRoute
+  AuthenticatedRelatoriosRoute: typeof AuthenticatedRelatoriosRoute
+  AuthenticatedPedidosIdRoute: typeof AuthenticatedPedidosIdRoute
+  AuthenticatedPedidosNovoRoute: typeof AuthenticatedPedidosNovoRoute
+  AuthenticatedPedidosIndexRoute: typeof AuthenticatedPedidosIndexRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedConfiguracoesRoute: AuthenticatedConfiguracoesRoute,
+  AuthenticatedProdutosRoute: AuthenticatedProdutosRoute,
+  AuthenticatedRelatoriosRoute: AuthenticatedRelatoriosRoute,
+  AuthenticatedPedidosIdRoute: AuthenticatedPedidosIdRoute,
+  AuthenticatedPedidosNovoRoute: AuthenticatedPedidosNovoRoute,
+  AuthenticatedPedidosIndexRoute: AuthenticatedPedidosIndexRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
