@@ -14,16 +14,221 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      order_items: {
+        Row: {
+          id: string
+          order_id: string
+          photo_url: string | null
+          product_id: string | null
+          product_name: string
+          quantity: number
+          subtotal: number
+          subtotal_cost: number
+          unit: string
+          unit_cost: number
+          unit_price: number
+        }
+        Insert: {
+          id?: string
+          order_id: string
+          photo_url?: string | null
+          product_id?: string | null
+          product_name: string
+          quantity: number
+          subtotal: number
+          subtotal_cost: number
+          unit: string
+          unit_cost: number
+          unit_price: number
+        }
+        Update: {
+          id?: string
+          order_id?: string
+          photo_url?: string | null
+          product_id?: string | null
+          product_name?: string
+          quantity?: number
+          subtotal?: number
+          subtotal_cost?: number
+          unit?: string
+          unit_cost?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          customer_name: string
+          customer_phone: string
+          finalized_at: string | null
+          id: string
+          notes: string
+          number: number
+          profit: number
+          status: string
+          total: number
+          total_cost: number
+          whatsapp_error: string | null
+          whatsapp_sent_at: string | null
+          whatsapp_status: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          customer_name: string
+          customer_phone?: string
+          finalized_at?: string | null
+          id?: string
+          notes?: string
+          number?: never
+          profit?: number
+          status?: string
+          total?: number
+          total_cost?: number
+          whatsapp_error?: string | null
+          whatsapp_sent_at?: string | null
+          whatsapp_status?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          customer_name?: string
+          customer_phone?: string
+          finalized_at?: string | null
+          id?: string
+          notes?: string
+          number?: never
+          profit?: number
+          status?: string
+          total?: number
+          total_cost?: number
+          whatsapp_error?: string | null
+          whatsapp_sent_at?: string | null
+          whatsapp_status?: string
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          active: boolean
+          category: string
+          cost_price: number
+          created_at: string
+          id: string
+          name: string
+          photo_url: string | null
+          sale_price: number
+          unit: string
+        }
+        Insert: {
+          active?: boolean
+          category?: string
+          cost_price?: number
+          created_at?: string
+          id?: string
+          name: string
+          photo_url?: string | null
+          sale_price?: number
+          unit?: string
+        }
+        Update: {
+          active?: boolean
+          category?: string
+          cost_price?: number
+          created_at?: string
+          id?: string
+          name?: string
+          photo_url?: string | null
+          sale_price?: number
+          unit?: string
+        }
+        Relationships: []
+      }
+      settings: {
+        Row: {
+          company_name: string
+          id: number
+          txt_width: number
+          updated_at: string
+          whatsapp_number: string
+        }
+        Insert: {
+          company_name?: string
+          id?: number
+          txt_width?: number
+          updated_at?: string
+          whatsapp_number?: string
+        }
+        Update: {
+          company_name?: string
+          id?: number
+          txt_width?: number
+          updated_at?: string
+          whatsapp_number?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      admin_exists: { Args: never; Returns: boolean }
+      create_order: {
+        Args: {
+          _customer_name: string
+          _customer_phone: string
+          _items: Json
+          _notes: string
+        }
+        Returns: string
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_admin: { Args: never; Returns: boolean }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +355,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin"],
+    },
   },
 } as const
