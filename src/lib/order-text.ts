@@ -50,7 +50,7 @@ function center(s: string, w: number): string {
 function leftRight(l: string, r: string, w: number): string[] {
   if (l.length + 1 + r.length <= w) return [l + " ".repeat(w - l.length - r.length) + r];
   const lines = wrap(l, w);
-  const last = lines[lines.length - 1];
+  const last = lines[lines.length - 1] ?? "";
   if (last.length + 1 + r.length <= w) {
     lines[lines.length - 1] = last + " ".repeat(w - last.length - r.length) + r;
   } else {

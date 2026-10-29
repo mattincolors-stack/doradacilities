@@ -50,7 +50,7 @@ function OrderPage() {
       .from("orders")
       .update({ status, finalized_at: status === "finalizado" ? new Date().toISOString() : status === "aberto" ? null : o.finalized_at })
       .eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success(status === "aberto" ? "Pedido reaberto" : status === "cancelado" ? "Pedido cancelado" : "Pedido finalizado");
     refresh();
   }

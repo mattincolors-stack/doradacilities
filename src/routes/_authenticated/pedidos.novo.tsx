@@ -49,7 +49,7 @@ function NewOrderPage() {
       const i = c.findIndex((l) => l.product.id === p.id);
       if (i < 0) return [...c, { product: p, quantity: 1 }];
       const n = [...c];
-      n[i] = { ...n[i], quantity: n[i].quantity + step(p) };
+      n[i] = { ...n[i]!, quantity: n[i]!.quantity + step(p) };
       return n;
     });
   }
@@ -58,9 +58,9 @@ function NewOrderPage() {
   }
 
   async function finalize() {
-    if (!name.trim()) return toast.error("Informe o nome do cliente");
+    if (!name.trim()) { toast.error("Informe o nome do cliente"); return; }
     const items = cart.filter((l) => l.quantity > 0);
-    if (!items.length) return toast.error("Adicione ao menos um produto");
+    if (!items.length) { toast.error("Adicione ao menos um produto"); return; }
     setBusy(true);
     try {
       const { data: id, error } = await supabase.rpc("create_order", {

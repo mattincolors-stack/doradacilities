@@ -32,7 +32,7 @@ describe.each([32, 48] as const)("thermal ticket %i cols", (width) => {
     expect(txt).toContain("Joao Conceicao");
   });
   it("has header, number, total and footer", () => {
-    expect(txt.split("\n")[0].trim()).toBe("DORA FACILITIES");
+    expect(txt.split("\n")[0]?.trim()).toBe("DORA FACILITIES");
     expect(txt).toContain("PEDIDO #42");
     expect(txt).toMatch(/TOTAL\s+R\$ 1\.234,50/);
     expect(txt).toContain("Obrigado pela preferencia!");

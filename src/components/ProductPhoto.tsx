@@ -3,7 +3,7 @@ import { Package } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
-export function ProductPhoto({ path, className }: { path?: string | null; className?: string }) {
+export function ProductPhoto({ path, className }: { path?: string | null | undefined; className?: string }) {
   const q = useQuery({
     queryKey: ["photo", path],
     enabled: !!path,

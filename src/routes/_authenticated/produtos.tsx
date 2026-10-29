@@ -35,13 +35,13 @@ function ProductsPage() {
 
   async function toggle(p: Product) {
     const { error } = await supabase.from("products").update({ active: !p.active }).eq("id", p.id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     qc.invalidateQueries({ queryKey: ["products"] });
   }
   async function remove(p: Product) {
     if (!confirm(`Excluir "${p.name}"? Pedidos antigos continuam com o histórico.`)) return;
     const { error } = await supabase.from("products").delete().eq("id", p.id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     if (p.photo_url) await supabase.storage.from("product-photos").remove([p.photo_url]);
     toast.success("Produto excluído");
     qc.invalidateQueries({ queryKey: ["products"] });
@@ -130,7 +130,7 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
   }
 
   async function save() {
-    if (!name.trim()) return toast.error("Informe o nome");
+    if (!name.trim()) { toast.error("Informe o nome"); return; }
     setBusy(true);
     try {
       let photo_url = product?.photo_url ?? null;

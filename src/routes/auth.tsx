@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
-  validateSearch: (s: Record<string, unknown>) => ({ erro: typeof s.erro === "string" ? s.erro : undefined }),
+  validateSearch: (s: Record<string, unknown>): { erro?: string } => (typeof s["erro"] === "string" ? { erro: s["erro"] } : {}),
   head: () => ({
     meta: [
       { title: "Entrar — DoraFacilities APP" },

@@ -1,6 +1,6 @@
 export function brl(n: number): string {
   const v = Math.round(Math.abs(Number(n) || 0) * 100) / 100;
-  const [i, d] = v.toFixed(2).split(".");
+  const [i = "0", d = "00"] = v.toFixed(2).split(".");
   const sign = Number(n) < 0 && v > 0 ? "-" : "";
   return `${sign}R$ ${i.replace(/\B(?=(\d{3})+(?!\d))/g, ".")},${d}`;
 }

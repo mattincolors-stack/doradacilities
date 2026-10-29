@@ -42,12 +42,12 @@ function SettingsPage() {
 
   async function save() {
     const digits = phone.replace(/\D/g, "");
-    if (digits.length < 12) return toast.error("Número com DDI e DDD, ex.: 5516995757737");
+    if (digits.length < 12) { toast.error("Número com DDI e DDD, ex.: 5516995757737"); return; }
     const { error } = await supabase
       .from("settings")
       .update({ company_name: company.trim() || "Dora Facilities", whatsapp_number: digits, txt_width: width, updated_at: new Date().toISOString() })
       .eq("id", 1);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Configurações salvas");
     qc.invalidateQueries({ queryKey: ["settings"] });
   }
