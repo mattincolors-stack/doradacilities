@@ -3,7 +3,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import capturedCSS from "../styles/site.css?raw";
 
 export const Route = createFileRoute("/")({
-  head: () => ({ meta: [{ title: "HortifrutiZap" }] }),
+  head: () => ({ meta: [
+    { title: "HortifrutiZap — Frutas e legumes frescos" },
+    { name: "description", content: "Entre com seu celular para ver o catálogo e fazer seu pedido de hortifruti." },
+    { property: "og:title", content: "HortifrutiZap — Frutas e legumes frescos" },
+    { property: "og:description", content: "Entre com seu celular para ver o catálogo e fazer seu pedido de hortifruti." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   staticData: { importedDocument: { html: { "lang": "en" }, body: {  } } },
   component: Index,
 });
