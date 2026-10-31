@@ -7,12 +7,12 @@ import { routeTree } from "./routeTree.gen";
 if (typeof window !== "undefined" && !(window as any).__chunkReloadHooked) {
   (window as any).__chunkReloadHooked = true;
   const KEY = "chunk-reload-at";
-  const reloadOnce = () => {
+  const reloadOnce = ((window as any).__chunkReload = () => {
     const last = Number(sessionStorage.getItem(KEY) || 0);
     if (Date.now() - last < 10000) return;
     sessionStorage.setItem(KEY, String(Date.now()));
     window.location.reload();
-  };
+  });
   window.addEventListener("vite:preloadError", (e) => { e.preventDefault(); reloadOnce(); });
   window.addEventListener("unhandledrejection", (e) => {
     const msg = String((e.reason as Error)?.message ?? e.reason ?? "");
@@ -28,6 +28,9 @@ export const getRouter = () => {
     context: { queryClient },
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
+    defaultOnCatch: (err: Error) => {
+      if (/dynamically imported module|Importing a module script failed/i.test(err?.message ?? "")) (window as any).__chunkReload?.();
+    },
   });
 
   return router;
