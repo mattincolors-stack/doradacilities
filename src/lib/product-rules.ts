@@ -17,7 +17,7 @@ export function saleLabel(p: { unit: string; weight_g?: number | null }) {
 }
 export const IMPORT_HEADERS = ["Categoria", "Produto", "Descrição", "Tipo de Venda", "Peso (g)", "Preço de Venda", "Custo", "Lucro", "Margem"];
 export type ImportProduct = { name: string; category: string; description: string; sale_type: SaleType; weight_g: number | null; unit: string; sale_price: number; cost_price: number };
-export type PreviewRow = { line: number; product: ImportProduct; errors: string[]; existingId?: string };
+export type PreviewRow = { line: number; product: ImportProduct; errors: string[]; existingId?: string | undefined };
 export function previewProducts(rows: unknown[][], existing: { id: string; name: string; category: string }[]): PreviewRow[] {
   const known = new Map(existing.map(p => [productKey(p.name, p.category), p.id]));
   const seen = new Set<string>();

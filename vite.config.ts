@@ -15,7 +15,7 @@ export default defineConfig({
       includeAssets: ["offline.html", "manifest.json", "icons/*.png"],
       workbox: {
         globPatterns: ["**/*.{js,css,png,ico,woff2}"],
-        navigateFallback: undefined,
+        navigateFallback: null,
         runtimeCaching: [
           { urlPattern: ({ request, url }) => request.mode === "navigate" && !/^\/(~oauth|api|_serverFn)/.test(url.pathname), handler: "NetworkFirst", options: { cacheName: "dora-navigation", precacheFallback: { fallbackURL: "/offline.html" }, networkTimeoutSeconds: 5, cacheableResponse: { statuses: [200] }, expiration: { maxEntries: 8 } } },
           { urlPattern: ({ url }) => url.origin === self.location.origin && /\/assets\/.*[-.][A-Za-z0-9_-]{8,}\.(js|css|woff2)$/.test(url.pathname), handler: "CacheFirst", options: { cacheName: "dora-assets", expiration: { maxEntries: 150 } } }
