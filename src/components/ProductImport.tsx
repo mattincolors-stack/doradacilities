@@ -87,6 +87,7 @@ export function ProductImport() {
         {summary ? <p role="status" className="font-semibold">{summary}</p> : <p className="text-sm">{rows?.filter(r => !r.errors.length).length} válidas · {rows?.filter(r => r.errors.length).length} com erro · {rows?.filter(r => r.existingId && !r.errors.length).length} já existentes</p>}
         <div className="space-y-2">{rows?.map(r => <div key={r.line} className="rounded-md border p-3 text-sm"><p className="font-semibold">Linha {r.line} · {r.product.name || "Sem nome"}</p><p className="text-muted-foreground">{r.product.category || "Sem categoria"} · {r.product.sale_type}</p><p className={r.errors.length ? "text-destructive" : "text-success"}>{r.errors.length ? r.errors.join("; ") : r.existingId ? "Será atualizado" : "Será criado"}</p></div>)}</div>
         {!summary && <Button className="h-12" disabled={busy || !rows?.some(r => !r.errors.length)} onClick={confirm}>{busy ? "Importando..." : "Confirmar importação"}</Button>}
+        {summary && <Button className="h-12" disabled={busy} onClick={() => { setRows(null); setSummary(null); }}>Concluir</Button>}
       </DialogContent>
     </Dialog>
   </>;
