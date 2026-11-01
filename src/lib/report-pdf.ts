@@ -45,7 +45,7 @@ export async function buildReportPdf(r: Report, meta: { company: string; period:
     ...opts,
     startY: y + 3,
     head: [["#", "Produto", "Qtd", "Faturamento"]],
-    body: r.topSold.map((p, i) => [String(i + 1), p.name, `${qty(p.quantity)} ${p.unit}`, brl(p.revenue)]),
+    body: r.topSold.map((p, i) => [String(i + 1), `${p.name}${p.description ? `\n${p.description}` : ""}`, `${qty(p.quantity)} ${p.unit}`, brl(p.revenue)]),
     columnStyles: { 2: { halign: "right" }, 3: { halign: "right" } },
   });
 
@@ -55,7 +55,7 @@ export async function buildReportPdf(r: Report, meta: { company: string; period:
     ...opts,
     startY: y + 3,
     head: [["#", "Produto", "Qtd", "Lucro"]],
-    body: r.topProfit.map((p, i) => [String(i + 1), p.name, `${qty(p.quantity)} ${p.unit}`, brl(p.profit)]),
+    body: r.topProfit.map((p, i) => [String(i + 1), `${p.name}${p.description ? `\n${p.description}` : ""}`, `${qty(p.quantity)} ${p.unit}`, brl(p.profit)]),
     columnStyles: { 2: { halign: "right" }, 3: { halign: "right" } },
   });
 

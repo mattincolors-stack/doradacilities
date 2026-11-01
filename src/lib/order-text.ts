@@ -1,6 +1,6 @@
 import { brl, dateTimeBR, qty } from "./format";
 
-export type TicketItem = { product_name: string; unit: string; quantity: number; subtotal: number };
+export type TicketItem = { product_name: string; description?: string; unit: string; quantity: number; subtotal: number };
 export type TicketOrder = {
   number: number;
   created_at: string;
@@ -100,7 +100,7 @@ export function buildWhatsappMessage(o: TicketOrder, company = "Dora Facilities"
     `Cliente: ${o.customer_name}${o.customer_phone ? ` (${o.customer_phone})` : ""}`,
     "",
     "*Itens:*",
-    ...o.items.map((it) => `- ${itemLabel(it)} = ${brl(it.subtotal)}`),
+    ...o.items.map((it) => `- ${itemLabel(it)} = ${brl(it.subtotal)}${it.description ? `\n  ${it.description}` : ""}`),
     "",
     `*Total: ${brl(o.total)}*`,
   ];

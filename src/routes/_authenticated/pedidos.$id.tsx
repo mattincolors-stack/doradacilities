@@ -115,6 +115,7 @@ function OrderPage() {
             <ProductPhoto path={it.photo_url} className="h-12 w-12" />
             <div className="min-w-0 flex-1">
               <p className="truncate font-semibold">{it.product_name}</p>
+              {it.description && <p className="text-xs text-muted-foreground">{it.description}</p>}
               <p className="text-xs text-muted-foreground">
                 {qty(it.quantity)} {it.unit} × {brl(it.unit_price)} · custo {brl(it.unit_cost)}
               </p>

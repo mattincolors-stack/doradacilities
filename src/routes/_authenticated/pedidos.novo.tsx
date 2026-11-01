@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { productsQuery, type Product } from "@/lib/queries";
 import { brl, qty } from "@/lib/format";
 import { sendOrderWhatsapp } from "@/lib/whatsapp.functions";
+import { saleLabel } from "@/lib/product-rules";
 
 export const Route = createFileRoute("/_authenticated/pedidos/novo")({
   head: () => ({ meta: [{ title: "Novo pedido — DoraFacilities APP" }] }),
@@ -49,7 +50,9 @@ function NewOrderPage() {
       const i = c.findIndex((l) => l.product.id === p.id);
       if (i < 0) return [...c, { product: p, quantity: 1 }];
       const n = [...c];
-      n[i] = { ...n[i]!, quantity: n[i]!.quantity + step(p) };
+      const line = n[i];
+      if (!line) return c;
+      n[i] = { ...line, quantity: line.quantity + step(p) };
       return n;
     });
   }
@@ -121,7 +124,8 @@ function NewOrderPage() {
               <ProductPhoto path={p.photo_url} className="h-14 w-14" />
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold">{p.name}</p>
-                <p className="text-xs text-muted-foreground">{brl(Number(p.sale_price))}/{p.unit}</p>
+                {p.description && <p className="text-xs text-muted-foreground">{p.description}</p>}
+                <p className="text-xs text-muted-foreground">{brl(Number(p.sale_price))}/{saleLabel(p)}</p>
               </div>
             </button>
           ))}
@@ -141,6 +145,7 @@ function NewOrderPage() {
             <ProductPhoto path={l.product.photo_url} className="h-12 w-12" />
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold">{l.product.name}</p>
+              {l.product.description && <p className="text-xs text-muted-foreground">{l.product.description}</p>}
               <p className="text-xs text-muted-foreground">
                 {qty(l.quantity)} {l.product.unit} × {brl(Number(l.product.sale_price))} = <b>{brl(l.quantity * Number(l.product.sale_price))}</b>
               </p>

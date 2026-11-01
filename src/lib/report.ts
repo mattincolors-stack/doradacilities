@@ -3,10 +3,10 @@ export type ReportOrder = {
   total: number;
   total_cost: number;
   profit: number;
-  order_items: { product_name: string; unit: string; quantity: number; subtotal: number; subtotal_cost: number }[];
+  order_items: { product_name: string; description?: string; unit: string; quantity: number; subtotal: number; subtotal_cost: number }[];
 };
 
-export type ProductStat = { name: string; unit: string; quantity: number; revenue: number; profit: number };
+export type ProductStat = { name: string; description: string; unit: string; quantity: number; revenue: number; profit: number };
 
 export function buildReport(orders: ReportOrder[]) {
   const revenue = orders.reduce((s, o) => s + Number(o.total), 0);
@@ -23,8 +23,8 @@ export function buildReport(orders: ReportOrder[]) {
     d.profit += Number(o.profit);
     byDay.set(day, d);
     for (const it of o.order_items) {
-      const key = `${it.product_name}|${it.unit}`;
-      const p = byProduct.get(key) ?? { name: it.product_name, unit: it.unit, quantity: 0, revenue: 0, profit: 0 };
+      const key = `${it.product_name}|${it.unit}|${it.description ?? ""}`;
+      const p = byProduct.get(key) ?? { name: it.product_name, description: it.description ?? "", unit: it.unit, quantity: 0, revenue: 0, profit: 0 };
       p.quantity += Number(it.quantity);
       p.revenue += Number(it.subtotal);
       p.profit += Number(it.subtotal) - Number(it.subtotal_cost);

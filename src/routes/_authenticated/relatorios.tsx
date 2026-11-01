@@ -47,7 +47,7 @@ function ReportsPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("orders")
-        .select("created_at,total,total_cost,profit,order_items(product_name,unit,quantity,subtotal,subtotal_cost)")
+        .select("created_at,total,total_cost,profit,order_items(product_name,description,unit,quantity,subtotal,subtotal_cost)")
         .eq("status", "finalizado")
         .gte("created_at", start.toISOString())
         .lte("created_at", end.toISOString())
@@ -120,8 +120,8 @@ function ReportsPage() {
         </div>
       </div>
 
-      <Table title="Mais vendidos (faturamento)" head={["Produto", "Qtd", "Valor"]} rows={r.topSold.map((p) => [p.name, `${qty(p.quantity)} ${p.unit}`, brl(p.revenue)])} />
-      <Table title="Mais lucrativos" head={["Produto", "Qtd", "Lucro"]} rows={r.topProfit.map((p) => [p.name, `${qty(p.quantity)} ${p.unit}`, brl(p.profit)])} />
+      <Table title="Mais vendidos (faturamento)" head={["Produto", "Qtd", "Valor"]} rows={r.topSold.map((p) => [`${p.name}${p.description ? `\n${p.description}` : ""}`, `${qty(p.quantity)} ${p.unit}`, brl(p.revenue)])} />
+      <Table title="Mais lucrativos" head={["Produto", "Qtd", "Lucro"]} rows={r.topProfit.map((p) => [`${p.name}${p.description ? `\n${p.description}` : ""}`, `${qty(p.quantity)} ${p.unit}`, brl(p.profit)])} />
       <Table title="Vendas por dia" head={["Dia", "Pedidos", "Valor"]} rows={r.days.map((d) => [d.day.split("-").reverse().join("/"), String(d.orders), brl(d.revenue)])} />
     </AppShell>
   );
@@ -152,7 +152,7 @@ function Table({ title, head, rows }: { title: string; head: string[]; rows: str
           <tbody>
             {rows.map((r, i) => (
               <tr key={i} className="border-t">
-                {r.map((c, j) => <td key={j} className={cn("py-1.5", j > 0 && "text-right font-medium")}>{c}</td>)}
+                {r.map((c, j) => <td key={j} className={cn("py-1.5", j > 0 && "text-right font-medium")}>{j === 0 ? c.split("\n").map((line, n) => <span key={n} className={n > 0 ? "block text-xs text-muted-foreground" : "block"}>{line}</span>) : c}</td>)}
               </tr>
             ))}
           </tbody>
