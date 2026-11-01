@@ -10,7 +10,7 @@ import { StatusBadge, WhatsBadge } from "@/components/StatusBadge";
 import { brl, dateTimeBR } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/pedidos/")({
-  head: () => ({ meta: [{ title: "Pedidos — DoraFacilities APP" }] }),
+  head: () => ({ meta: [{ title: "Pedidos — DoraFacilities APP" }, { name: "description", content: "Consultar e gerenciar pedidos da Dora Facilities." }, { property: "og:title", content: "Pedidos — DoraFacilities APP" }, { property: "og:description", content: "Consultar e gerenciar pedidos da Dora Facilities." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: OrdersPage,
 });
 

@@ -8,3 +8,8 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Product validation and import matching use shared pure rules in `product-rules.ts` so forms and spreadsheets calculate consistently.
+- Order item descriptions and weights are snapshotted by an insert trigger, preserving historical orders when products change.
+- XLSX processing uses a dynamically imported ExcelJS browser library and only the first worksheet; categories remain product text values to preserve the existing schema.
+- Offline support uses generated Workbox via vite-plugin-pwa and a single preview-safe registration wrapper; do not cache authenticated API responses or add offline mutations.

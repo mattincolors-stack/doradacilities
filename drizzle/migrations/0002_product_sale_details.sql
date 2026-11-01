@@ -1,0 +1,6 @@
+ALTER TABLE public.products ADD COLUMN description text NOT NULL DEFAULT '', ADD COLUMN sale_type text NOT NULL DEFAULT 'Por kg', ADD COLUMN weight_g numeric;
+UPDATE public.products SET sale_type = CASE WHEN unit = 'kg' THEN 'Por kg' ELSE 'Unitário' END;
+ALTER TABLE public.products ADD CONSTRAINT products_sale_type_valid CHECK (sale_type IN ('Por kg','Unitário')), ADD CONSTRAINT products_weight_positive CHECK (weight_g IS NULL OR weight_g > 0);
+ALTER TABLE public.order_items ADD COLUMN description text NOT NULL DEFAULT '', ADD COLUMN weight_g numeric;
+CREATE OR REPLACE FUNCTION public.snapshot_product_details() RETURNS trigger LANGUAGE plpgsql SECURITY INVOKER SET search_path = public AS $$ BEGIN SELECT p.description, p.weight_g INTO NEW.description, NEW.weight_g FROM public.products p WHERE p.id = NEW.product_id; NEW.description := COALESCE(NEW.description, ''); RETURN NEW; END $$;
+CREATE TRIGGER snapshot_product_details BEFORE INSERT ON public.order_items FOR EACH ROW EXECUTE FUNCTION public.snapshot_product_details();
