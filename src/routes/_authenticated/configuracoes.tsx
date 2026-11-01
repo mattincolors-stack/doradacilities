@@ -13,6 +13,7 @@ import { settingsQuery } from "@/lib/queries";
 import { createAdmin } from "@/lib/admin.functions";
 import { getWhatsappConfig } from "@/lib/whatsapp.functions";
 import { cn } from "@/lib/utils";
+import { InstallApp } from "@/components/InstallApp";
 
 export const Route = createFileRoute("/_authenticated/configuracoes")({
   head: () => ({ meta: [{ title: "Configurações — DoraFacilities APP" }] }),
@@ -75,6 +76,7 @@ function SettingsPage() {
 
   return (
     <AppShell title="Configurações">
+      <InstallApp />
       <section className="space-y-3 rounded-xl border bg-card p-4">
         <h2 className="font-bold">Empresa</h2>
         <div className="space-y-1.5">
