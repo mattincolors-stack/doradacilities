@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       order_items: {
         Row: {
+          description: string
           id: string
           order_id: string
           photo_url: string | null
@@ -27,8 +28,10 @@ export type Database = {
           unit: string
           unit_cost: number
           unit_price: number
+          weight_g: number | null
         }
         Insert: {
+          description?: string
           id?: string
           order_id: string
           photo_url?: string | null
@@ -40,8 +43,10 @@ export type Database = {
           unit: string
           unit_cost: number
           unit_price: number
+          weight_g?: number | null
         }
         Update: {
+          description?: string
           id?: string
           order_id?: string
           photo_url?: string | null
@@ -53,6 +58,7 @@ export type Database = {
           unit?: string
           unit_cost?: number
           unit_price?: number
+          weight_g?: number | null
         }
         Relationships: [
           {
@@ -131,33 +137,42 @@ export type Database = {
           category: string
           cost_price: number
           created_at: string
+          description: string
           id: string
           name: string
           photo_url: string | null
           sale_price: number
+          sale_type: string
           unit: string
+          weight_g: number | null
         }
         Insert: {
           active?: boolean
           category?: string
           cost_price?: number
           created_at?: string
+          description?: string
           id?: string
           name: string
           photo_url?: string | null
           sale_price?: number
+          sale_type?: string
           unit?: string
+          weight_g?: number | null
         }
         Update: {
           active?: boolean
           category?: string
           cost_price?: number
           created_at?: string
+          description?: string
           id?: string
           name?: string
           photo_url?: string | null
           sale_price?: number
+          sale_type?: string
           unit?: string
+          weight_g?: number | null
         }
         Relationships: []
       }
