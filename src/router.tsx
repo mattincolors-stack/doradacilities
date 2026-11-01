@@ -28,8 +28,8 @@ export const getRouter = () => {
     context: { queryClient },
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
-    defaultOnCatch: (err: Error) => {
-      if (/dynamically imported module|Importing a module script failed/i.test(err?.message ?? "")) (window as any).__chunkReload?.();
+    defaultOnCatch: (err: unknown) => {
+      if (/dynamically imported module|Importing a module script failed/i.test(String((err as Error)?.message ?? ""))) (window as any).__chunkReload?.();
     },
   });
 
