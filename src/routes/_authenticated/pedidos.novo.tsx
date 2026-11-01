@@ -17,7 +17,7 @@ import { sendOrderWhatsapp } from "@/lib/whatsapp.functions";
 import { saleLabel } from "@/lib/product-rules";
 
 export const Route = createFileRoute("/_authenticated/pedidos/novo")({
-  head: () => ({ meta: [{ title: "Novo pedido — DoraFacilities APP" }] }),
+  head: () => ({ meta: [{ title: "Novo pedido — DoraFacilities APP" }, { name: "description", content: "Criar um pedido da Dora Facilities com produtos e descrições." }, { property: "og:title", content: "Novo pedido — DoraFacilities APP" }, { property: "og:description", content: "Criar um pedido da Dora Facilities com produtos e descrições." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: NewOrderPage,
 });
 

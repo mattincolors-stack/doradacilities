@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 import { InstallApp } from "@/components/InstallApp";
 
 export const Route = createFileRoute("/_authenticated/configuracoes")({
-  head: () => ({ meta: [{ title: "Configurações — DoraFacilities APP" }] }),
+  head: () => ({ meta: [{ title: "Configurações — DoraFacilities APP" }, { name: "description", content: "Configurações da empresa e instalação do Dora Facilities." }, { property: "og:title", content: "Configurações — DoraFacilities APP" }, { property: "og:description", content: "Configurações da empresa e instalação do Dora Facilities." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: SettingsPage,
 });
 

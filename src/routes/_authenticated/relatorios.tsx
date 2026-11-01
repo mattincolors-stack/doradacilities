@@ -15,7 +15,7 @@ import { downloadBlob, shareFile } from "@/lib/files";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/relatorios")({
-  head: () => ({ meta: [{ title: "Relatórios — DoraFacilities APP" }] }),
+  head: () => ({ meta: [{ title: "Relatórios — DoraFacilities APP" }, { name: "description", content: "Vendas, custos, lucros e relatórios PDF da Dora Facilities." }, { property: "og:title", content: "Relatórios — DoraFacilities APP" }, { property: "og:description", content: "Vendas, custos, lucros e relatórios PDF da Dora Facilities." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: ReportsPage,
 });
 

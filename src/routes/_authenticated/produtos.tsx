@@ -19,7 +19,7 @@ import { brl, marginPct, pct } from "@/lib/format";
 import { resizeImage } from "@/lib/files";
 
 export const Route = createFileRoute("/_authenticated/produtos")({
-  head: () => ({ meta: [{ title: "Produtos — DoraFacilities APP" }] }),
+  head: () => ({ meta: [{ title: "Produtos — DoraFacilities APP" }, { name: "description", content: "Cadastro, custos, margens e importação de produtos da Dora Facilities." }, { property: "og:title", content: "Produtos — DoraFacilities APP" }, { property: "og:description", content: "Cadastro, custos, margens e importação de produtos da Dora Facilities." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: ProductsPage,
 });
 

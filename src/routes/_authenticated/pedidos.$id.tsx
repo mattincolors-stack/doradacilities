@@ -16,7 +16,7 @@ import { downloadBlob, shareFile } from "@/lib/files";
 import { getWhatsappConfig, sendOrderWhatsapp } from "@/lib/whatsapp.functions";
 
 export const Route = createFileRoute("/_authenticated/pedidos/$id")({
-  head: () => ({ meta: [{ title: "Pedido — DoraFacilities APP" }] }),
+  head: () => ({ meta: [{ title: "Pedido — DoraFacilities APP" }, { name: "description", content: "Detalhes do pedido, WhatsApp e impressão da Dora Facilities." }, { property: "og:title", content: "Pedido — DoraFacilities APP" }, { property: "og:description", content: "Detalhes do pedido, WhatsApp e impressão da Dora Facilities." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: OrderPage,
 });
 
