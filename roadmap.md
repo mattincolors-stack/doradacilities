@@ -1,4 +1,5 @@
 # Roadmap
+- [ ] Edição em lote de custos zerados preservando os preços de venda
 - [x] Ampliar produtos e descrições preservando pedidos e arquivos
 - [x] Importação XLSX com prévia e atualização sem duplicação
 - [x] Instalação Android e abertura básica offline implementadas; validação no app publicado depende de publicação

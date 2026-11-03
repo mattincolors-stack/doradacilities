@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ProductImport } from "@/components/ProductImport";
+import { ProductBatchCosts } from "@/components/ProductBatchCosts";
 import { parseMoney, productMetrics, saleLabel, type SaleType } from "@/lib/product-rules";
 import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -60,6 +61,7 @@ function ProductsPage() {
       }
     >
       <ProductImport />
+      <ProductBatchCosts products={products.data ?? []} />
       <div className="relative">
         <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
         <Input placeholder="Buscar por nome ou categoria" value={search} onChange={(e) => setSearch(e.target.value)} className="h-12 pl-10 text-base" />
