@@ -10,6 +10,7 @@
 <!-- LOVABLE:END -->
 
 - Product validation and import matching use shared pure rules in `product-rules.ts` so forms and spreadsheets calculate consistently.
+- Batch cost edits use a dedicated product dialog and shared zero-cost update rules; send only cost_price with a zero-cost condition to preserve sale prices and concurrent edits.
 - Order item descriptions and weights are snapshotted by an insert trigger, preserving historical orders when products change.
 - XLSX processing uses a dynamically imported ExcelJS browser library and only the first worksheet; categories remain product text values to preserve the existing schema.
 - Offline support uses generated Workbox via vite-plugin-pwa and a single preview-safe registration wrapper; do not cache authenticated API responses or add offline mutations.

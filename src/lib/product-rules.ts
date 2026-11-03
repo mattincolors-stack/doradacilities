@@ -1,4 +1,11 @@
 export type SaleType = "Por kg" | "Unitário";
+export function zeroCostUpdates(products: { id: string; cost_price: number }[], drafts: Record<string, string>) {
+  return products.filter(p => Number(p.cost_price) === 0 && (drafts[p.id] ?? "").trim() !== "").map(p => {
+    const cost = parseMoney(drafts[p.id]);
+    if (!Number.isFinite(cost) || cost <= 0) throw new Error("Informe custos maiores que zero, como R$ 11,50");
+    return { id: p.id, update: { cost_price: cost } };
+  });
+}
 export function parseMoney(value: unknown): number {
   if (typeof value === "number") return Number.isFinite(value) ? value : NaN;
   const raw = String(value ?? "").replace(/R\$/gi, "").replace(/\s/g, "");

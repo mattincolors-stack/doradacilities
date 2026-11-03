@@ -1,8 +1,20 @@
 import { describe, expect, it } from "vitest";
-import { parseMoney, previewProducts, productMetrics } from "./product-rules";
+import { parseMoney, previewProducts, productMetrics, zeroCostUpdates } from "./product-rules";
 import { buildThermalTicket, buildWhatsappMessage, type TicketOrder } from "./order-text";
 import { buildReport } from "./report";
 describe("Regras de produtos", () => {
+  it("edição em lote preenche somente custos zerados sem enviar preços de venda", () => {
+    const products = [{ id: "zero", cost_price: 0, sale_price: 11.5 }, { id: "existing", cost_price: 5.22, sale_price: 20 }];
+    expect(zeroCostUpdates(products, { zero: "R$ 6,50", existing: "9,00" })).toEqual([{ id: "zero", update: { cost_price: 6.5 } }]);
+    expect(products[0]?.sale_price).toBe(11.5);
+    expect(products[1]?.sale_price).toBe(20);
+  });
+  it("mantém custos em branco sem alteração", () => {
+    expect(zeroCostUpdates([{ id: "blank", cost_price: 0 }], { blank: " " })).toEqual([]);
+  });
+  it("rejeita custos inválidos, negativos ou zero antes de salvar em lote", () => {
+    for (const value of ["abc", "-1,00", "0,00"]) expect(() => zeroCostUpdates([{ id: "zero", cost_price: 0 }], { zero: value })).toThrow();
+  });
   it("aceita preço com símbolo e vírgula", () => { expect(parseMoney("R$ 11,50")).toBe(11.5); expect(parseMoney("11,50")).toBe(11.5); });
   it("calcula lucro como venda menos custo", () => { expect(productMetrics(11.5,5.22).profit).toBeCloseTo(6.28); });
   it("calcula margem sobre a venda, inclusive negativa", () => { expect(productMetrics(10,12).margin).toBe(-20); });
