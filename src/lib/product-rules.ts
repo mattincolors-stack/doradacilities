@@ -16,6 +16,20 @@ export function productMetrics(sale: number, cost: number, weight?: number | nul
   const profit = sale - cost;
   return { profit, margin: sale > 0 ? profit / sale * 100 : 0, perKg: weight && weight > 0 ? sale * 1000 / weight : null };
 }
+export function normalizeText(s: string): string {
+  return s.toLocaleLowerCase("pt-BR").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
+}
+/** Sugere o produto de uma foto pelo nome do arquivo; null quando nenhum nome combina. */
+export function matchProductByFilename(filename: string, products: { id: string; name: string }[]): string | null {
+  const base = normalizeText(filename.replace(/\.[^.]+$/, ""));
+  if (!base) return null;
+  let best: { id: string; len: number } | null = null;
+  for (const p of products) {
+    const n = normalizeText(p.name);
+    if (n && (base.includes(n) || n.includes(base)) && (!best || n.length > best.len)) best = { id: p.id, len: n.length };
+  }
+  return best ? best.id : null;
+}
 export function productKey(name: string, category: string) {
   return `${category.trim().toLocaleLowerCase("pt-BR")}|${name.trim().toLocaleLowerCase("pt-BR")}`;
 }
