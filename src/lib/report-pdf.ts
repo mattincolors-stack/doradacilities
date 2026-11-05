@@ -1,7 +1,12 @@
-import type { Report } from "./report";
+import { variationPct, type Report } from "./report";
 import { brl, dateTimeBR, pct, qty } from "./format";
 
-export async function buildReportPdf(r: Report, meta: { company: string; period: string }): Promise<Blob> {
+const varLabel = (c: number, p: number) => {
+  const v = variationPct(c, p);
+  return v === null ? "—" : `${v > 0 ? "+" : ""}${pct(v)}`;
+};
+
+export async function buildReportPdf(r: Report, meta: { company: string; period: string }, prev?: Report): Promise<Blob> {
   const { jsPDF } = await import("jspdf");
   const autoTable = (await import("jspdf-autotable")).default;
   const doc = new jsPDF({ unit: "mm", format: "a4" });
@@ -40,6 +45,34 @@ export async function buildReportPdf(r: Report, meta: { company: string; period:
   });
 
   let y = next();
+  if (prev) {
+    title("Comparação com o período anterior", y);
+    autoTable(doc, {
+      ...opts,
+      startY: y + 3,
+      head: [["Indicador", "Atual", "Anterior", "Variação"]],
+      body: [
+        ["Pedidos", String(r.count), String(prev.count), varLabel(r.count, prev.count)],
+        ["Faturamento", brl(r.revenue), brl(prev.revenue), varLabel(r.revenue, prev.revenue)],
+        ["Custo total", brl(r.cost), brl(prev.cost), varLabel(r.cost, prev.cost)],
+        ["Lucro", brl(r.profit), brl(prev.profit), varLabel(r.profit, prev.profit)],
+        ["Margem média", pct(r.margin), pct(prev.margin), `${(r.margin - prev.margin).toFixed(1).replace(".", ",")} p.p.`],
+      ],
+      columnStyles: { 1: { halign: "right" }, 2: { halign: "right" }, 3: { halign: "right" } },
+    });
+    y = next();
+  }
+
+  title("Lucro e margem por categoria", y);
+  autoTable(doc, {
+    ...opts,
+    startY: y + 3,
+    head: [["Categoria", "Faturamento", "Lucro", "Margem"]],
+    body: r.categories.map((c) => [c.category, brl(c.revenue), brl(c.profit), pct(c.margin)]),
+    columnStyles: { 1: { halign: "right" }, 2: { halign: "right" }, 3: { halign: "right" } },
+  });
+
+  y = next();
   title("Produtos mais vendidos (por faturamento)", y);
   autoTable(doc, {
     ...opts,
