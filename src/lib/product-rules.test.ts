@@ -28,3 +28,14 @@ describe("Regras de produtos", () => {
 const order: TicketOrder = { number:1, created_at:"2026-11-01T00:00:00Z",customer_name:"Cliente",customer_phone:"",notes:"",total:10,items:[{product_name:"Mix",description:"Banana e manga",unit:"un",quantity:1,subtotal:10}] };
 it("leva descrição ao WhatsApp sem alterar o TXT térmico", () => {expect(buildWhatsappMessage(order)).toContain("Banana e manga");expect(buildThermalTicket(order,{width:32})).not.toContain("Banana e manga");});
 it("preserva descrição nos relatórios",()=>{const r=buildReport([{created_at:order.created_at,total:10,total_cost:6,profit:4,order_items:[{...order.items[0],product_name:"Mix",unit:"un",quantity:1,subtotal:10,subtotal_cost:6}]}]);expect(r.topSold[0]?.description).toBe("Banana e manga");});
+import { matchProductByFilename as matchFile } from "./product-rules";
+describe("Sugestão de produto pelo nome do arquivo", () => {
+  const ps = [{ id: "1", name: "Banana Prata" }, { id: "2", name: "Banana" }, { id: "3", name: "Maçã Fuji" }];
+  it("ignora acentos, maiúsculas, hífens, underscores e extensão", () => {
+    expect(matchFile("banana-prata.jpg", ps)).toBe("1");
+    expect(matchFile("MACA_FUJI.JPEG", ps)).toBe("3");
+  });
+  it("retorna null quando nenhum produto combina", () => {
+    expect(matchFile("IMG_2024.jpg", ps)).toBeNull();
+  });
+});

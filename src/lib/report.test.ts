@@ -60,3 +60,15 @@ describe("Relatório", () => {
     expect(r.orders[1]?.margin).toBeCloseTo(40);
   });
 });
+
+describe("Relatório — custo e categoria", () => {
+  it("soma custo e lucro do produto com custo zerado no total", () => {
+    const r = buildReport([mk({ total: 10, total_cost: 0, profit: 10 }, [{ product_id: "p1", product_name: "Kiwi", unit: "kg", quantity: 1, subtotal: 10, subtotal_cost: 0 }])], new Map([["p1", "Frutas"]]));
+    expect(r.zeroCost).toHaveLength(1);
+    expect(r.categories[0]).toMatchObject({ category: "Frutas", cost: 0, profit: 10 });
+    expect(r.margin).toBe(100);
+  });
+  it("não alerta itens com custo preenchido", () => {
+    expect(buildReport([mk({}, [{ product_name: "Banana", unit: "kg", quantity: 1, subtotal: 10, subtotal_cost: 6 }])]).zeroCost).toEqual([]);
+  });
+});

@@ -25,15 +25,15 @@ export async function buildReportXlsx(r: Report, prev: Report, meta: { company: 
   resumo.getRow(1).font = { bold: true, size: 14 };
   resumo.getRow(4).font = { bold: true };
 
-  const prod = wb.addWorksheet("Por produto");
+  const dia = wb.addWorksheet("Por dia");
+  const cat = wb.addWorksheet("Por categoria");
+  const prod = wb.addWorksheet("Produtos");
   prod.addRow(["Produto", "Descrição", "Unidade", "Quantidade", "Faturamento (R$)", "Lucro (R$)"]);
   for (const p of r.allProducts) prod.addRow([p.name, p.description, p.unit, p.quantity, money(p.revenue), money(p.profit)]);
 
-  const cat = wb.addWorksheet("Por categoria");
   cat.addRow(["Categoria", "Faturamento (R$)", "Custo (R$)", "Lucro (R$)", "Margem (%)"]);
   for (const c of r.categories) cat.addRow([c.category, money(c.revenue), money(c.cost), money(c.profit), oneDec(c.margin)]);
 
-  const dia = wb.addWorksheet("Por dia");
   dia.addRow(["Dia", "Pedidos", "Faturamento (R$)", "Lucro (R$)"]);
   for (const d of r.days) dia.addRow([dayBR(d.day), d.orders, money(d.revenue), money(d.profit)]);
 
@@ -42,6 +42,10 @@ export async function buildReportXlsx(r: Report, prev: Report, meta: { company: 
   for (const o of r.orders) ped.addRow([dayBR(o.day), o.number ?? "", o.customer, money(o.total), money(o.cost), money(o.profit), oneDec(o.margin)]);
 
   for (const s of [prod, cat, dia, ped]) s.getRow(1).font = { bold: true };
+  const BRL = '"R$" #,##0.00';
+  const fmt = (s: typeof prod, cols: number[], from = 2) => s.eachRow((row, n) => { if (n >= from) for (const c of cols) { const cell = row.getCell(c); if (typeof cell.value === "number") cell.numFmt = BRL; } });
+  for (let n = 6; n <= 8; n++) for (const c of [2, 3]) resumo.getRow(n).getCell(c).numFmt = BRL;
+  fmt(prod, [5, 6]); fmt(cat, [2, 3, 4]); fmt(dia, [3, 4]); fmt(ped, [4, 5, 6]);
   for (const s of [resumo, prod, cat, dia, ped]) s.columns.forEach((c) => { c.width = 20; });
 
   return new Blob([await wb.xlsx.writeBuffer()], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });

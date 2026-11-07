@@ -9,7 +9,7 @@ import { resizeImage } from "@/lib/files";
 import { matchProductByFilename } from "@/lib/product-rules";
 import type { Product } from "@/lib/queries";
 
-type Entry = { file: File; url: string; productId: string | null; done: boolean };
+type Entry = { file: File; url: string; productId: string | null; done: boolean; failed?: boolean };
 
 export function ProductBatchPhotos({ products }: { products: Product[] }) {
   const input = useRef<HTMLInputElement>(null);
@@ -17,6 +17,7 @@ export function ProductBatchPhotos({ products }: { products: Product[] }) {
   const [entries, setEntries] = useState<Entry[] | null>(null);
   const [busy, setBusy] = useState(false);
   const [summary, setSummary] = useState<string | null>(null);
+  const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
 
   function pick(files: FileList | null) {
     const list = [...(files ?? [])].filter((f) => f.type.startsWith("image/"));
@@ -37,11 +38,13 @@ export function ProductBatchPhotos({ products }: { products: Product[] }) {
     const targets = (entries ?? []).filter((e) => e.productId && !e.done);
     if (!targets.length) return;
     setBusy(true);
+    const ignored = (entries ?? []).filter((e) => !e.productId && !e.done).length;
+    setProgress({ done: 0, total: targets.length });
     let sent = 0;
     let failed = 0;
     for (const e of targets) {
       try {
-        const blob = await resizeImage(e.file, 800);
+        const blob = await resizeImage(e.file, 1000, 0.8);
         const path = `${crypto.randomUUID()}.jpg`;
         const { error: upErr } = await supabase.storage.from("product-photos").upload(path, blob, { contentType: "image/jpeg" });
         if (upErr) throw upErr;
@@ -50,13 +53,16 @@ export function ProductBatchPhotos({ products }: { products: Product[] }) {
         if (updErr) throw updErr;
         if (product?.photo_url) await supabase.storage.from("product-photos").remove([product.photo_url]);
         sent++;
-        setEntries((prev) => prev?.map((x) => (x === e ? { ...x, done: true } : x)) ?? null);
+        setEntries((prev) => prev?.map((x) => (x.url === e.url ? { ...x, done: true, failed: false } : x)) ?? null);
       } catch {
         failed++;
+        setEntries((prev) => prev?.map((x) => (x.url === e.url ? { ...x, failed: true } : x)) ?? null);
       }
+      setProgress({ done: sent + failed, total: targets.length });
     }
     setBusy(false);
-    setSummary(`${sent} fotos enviadas${failed ? ` · ${failed} com falha` : ""}.`);
+    setSummary(`${sent} foto(s) salva(s) · ${ignored} ignorada(s) · ${failed} com erro.`);
+    setProgress(null);
     if (failed) toast.error("Algumas fotos não foram enviadas. Tente novamente.");
     await qc.invalidateQueries({ queryKey: ["products"] });
   }
@@ -73,6 +79,8 @@ export function ProductBatchPhotos({ products }: { products: Product[] }) {
           <DialogHeader>
             <DialogTitle>{summary ? "Resultado do envio" : "Enviar fotos em lote"}</DialogTitle>
           </DialogHeader>
+          {progress && <p role="status" className="text-sm">Enviando {progress.done} de {progress.total}...</p>}
+          {!summary && !progress && <p className="text-sm text-muted-foreground">Confira o produto de cada foto. Nada é salvo até você confirmar.</p>}
           {summary && <p role="status" className="text-sm font-semibold">{summary}</p>}
           <div className="space-y-3">
             {entries?.map((e, i) => (
@@ -87,12 +95,14 @@ export function ProductBatchPhotos({ products }: { products: Product[] }) {
                     onChange={(ev) => setEntries((prev) => prev?.map((x, j) => (j === i ? { ...x, productId: ev.target.value || null } : x)) ?? null)}
                     className="mt-1 h-11 w-full rounded-md border border-input bg-card px-2 text-sm"
                   >
-                    <option value="">Escolher produto...</option>
+                    <option value="">Ignorar este arquivo</option>
                     {products.map((p) => (
                       <option key={p.id} value={p.id}>{p.name}{p.category ? ` · ${p.category}` : ""}</option>
                     ))}
                   </select>
                   {e.done && <p className="mt-1 text-xs text-success">Enviada</p>}
+                  {e.failed && !e.done && <p className="mt-1 text-xs text-destructive">Erro ao enviar</p>}
+                  {!e.productId && !e.done && <p className="mt-1 text-xs text-muted-foreground">Nenhum produto sugerido — escolha ou deixe ignorado</p>}
                 </div>
               </div>
             ))}
