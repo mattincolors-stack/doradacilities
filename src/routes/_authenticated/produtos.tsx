@@ -22,7 +22,7 @@ import { resizeImage } from "@/lib/files";
 
 export const Route = createFileRoute("/_authenticated/produtos")({
   head: () => ({ meta: [{ title: "Produtos — DoraFacilities APP" }, { name: "description", content: "Cadastro, custos, margens e importação de produtos da Dora Facilities." }, { property: "og:title", content: "Produtos — DoraFacilities APP" }, { property: "og:description", content: "Cadastro, custos, margens e importação de produtos da Dora Facilities." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
-  validateSearch: (s: Record<string, unknown>): { custos?: boolean } => (s.custos ? { custos: true } : {}),
+  validateSearch: (s: Record<string, unknown>): { custos?: boolean } => (s["custos"] ? { custos: true } : {}),
   component: ProductsPage,
 });
 
@@ -66,7 +66,7 @@ function ProductsPage() {
       }
     >
       <ProductImport />
-      <ProductBatchCosts products={products.data ?? []} autoOpen={custos} />
+      <ProductBatchCosts products={products.data ?? []} autoOpen={!!custos} />
       <ProductBatchPhotos products={products.data ?? []} />
       <div className="relative">
         <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
