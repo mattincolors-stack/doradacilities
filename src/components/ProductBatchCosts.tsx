@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState , useEffect} from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { ClipboardPen, Search } from "lucide-react";
 import { toast } from "sonner";
@@ -11,9 +11,11 @@ import { brl, pct } from "@/lib/format";
 import { parseMoney, productMetrics, saleLabel, zeroCostUpdates } from "@/lib/product-rules";
 import type { Product } from "@/lib/queries";
 
-export function ProductBatchCosts({ products }: { products: Product[] }) {
+export function ProductBatchCosts({ products, autoOpen }: { products: Product[]; autoOpen?: boolean }) {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
+  const [opened, setOpened] = useState(false);
+  useEffect(() => { if (autoOpen && !opened && products.length) { setOpened(true); setOpen(true); } }, [autoOpen, opened, products.length]);
   const [drafts, setDrafts] = useState<Record<string, string>>({});
   const [search, setSearch] = useState("");
   const [busy, setBusy] = useState(false);

@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ProductImport } from "@/components/ProductImport";
 import { ProductBatchCosts } from "@/components/ProductBatchCosts";
+import { ProductBatchPhotos } from "@/components/ProductBatchPhotos";
 import { parseMoney, productMetrics, saleLabel, type SaleType } from "@/lib/product-rules";
 import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -21,6 +22,7 @@ import { resizeImage } from "@/lib/files";
 
 export const Route = createFileRoute("/_authenticated/produtos")({
   head: () => ({ meta: [{ title: "Produtos — DoraFacilities APP" }, { name: "description", content: "Cadastro, custos, margens e importação de produtos da Dora Facilities." }, { property: "og:title", content: "Produtos — DoraFacilities APP" }, { property: "og:description", content: "Cadastro, custos, margens e importação de produtos da Dora Facilities." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
+  validateSearch: (s: Record<string, unknown>): { custos?: boolean } => (s.custos ? { custos: true } : {}),
   component: ProductsPage,
 });
 
@@ -31,11 +33,14 @@ function ProductsPage() {
   const products = useQuery(productsQuery);
   const [search, setSearch] = useState("");
   const [editing, setEditing] = useState<Product | "new" | null>(null);
+  const [noPhoto, setNoPhoto] = useState(false);
+  const { custos } = Route.useSearch();
+  const noPhotoCount = (products.data ?? []).filter((p) => !p.photo_url).length;
 
   const list = useMemo(() => {
     const s = search.trim().toLowerCase();
-    return (products.data ?? []).filter((p) => !s || p.name.toLowerCase().includes(s) || p.category.toLowerCase().includes(s));
-  }, [products.data, search]);
+    return (products.data ?? []).filter((p) => !noPhoto || !p.photo_url).filter((p) => !s || p.name.toLowerCase().includes(s) || p.category.toLowerCase().includes(s));
+  }, [products.data, search, noPhoto]);
 
   async function toggle(p: Product) {
     const { error } = await supabase.from("products").update({ active: !p.active }).eq("id", p.id);
@@ -61,11 +66,17 @@ function ProductsPage() {
       }
     >
       <ProductImport />
-      <ProductBatchCosts products={products.data ?? []} />
+      <ProductBatchCosts products={products.data ?? []} autoOpen={custos} />
+      <ProductBatchPhotos products={products.data ?? []} />
       <div className="relative">
         <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
         <Input placeholder="Buscar por nome ou categoria" value={search} onChange={(e) => setSearch(e.target.value)} className="h-12 pl-10 text-base" />
       </div>
+      <div className="mt-2 flex items-center gap-2">
+        <Button variant={noPhoto ? "outline" : "default"} size="sm" className="h-10" onClick={() => setNoPhoto(false)}>Todos ({products.data?.length ?? 0})</Button>
+        <Button variant={noPhoto ? "default" : "outline"} size="sm" className="h-10" aria-pressed={noPhoto} onClick={() => setNoPhoto(true)}>Sem foto ({noPhotoCount})</Button>
+      </div>
+      {products.data && <p className="mt-1 text-xs text-muted-foreground">{noPhotoCount} de {products.data.length} produtos sem foto</p>}
       <div className="mt-4 space-y-2">
         {products.isLoading && <p className="py-8 text-center text-muted-foreground">Carregando...</p>}
         {products.data?.length === 0 && (
