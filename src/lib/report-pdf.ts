@@ -45,6 +45,15 @@ export async function buildReportPdf(r: Report, meta: { company: string; period:
   });
 
   let y = next();
+  if (r.zeroCost.length) {
+    doc.setTextColor(180, 30, 30);
+    title("Atenção: produtos vendidos com custo zerado", y);
+    doc.setFontSize(9);
+    const lines = doc.splitTextToSize(`O lucro destes itens está superestimado: ${r.zeroCost.map((z) => z.name + (z.description ? ` (${z.description})` : "")).join(", ")}.`, 182);
+    doc.text(lines, 14, y + 5);
+    doc.setTextColor(0, 0, 0);
+    y += 10 + lines.length * 4;
+  }
   if (prev) {
     title("Comparação com o período anterior", y);
     autoTable(doc, {
@@ -100,6 +109,17 @@ export async function buildReportPdf(r: Report, meta: { company: string; period:
     head: [["Dia", "Pedidos", "Faturamento", "Lucro"]],
     body: r.days.map((d) => [d.day.split("-").reverse().join("/"), String(d.orders), brl(d.revenue), brl(d.profit)]),
     columnStyles: { 1: { halign: "right" }, 2: { halign: "right" }, 3: { halign: "right" } },
+  });
+
+  y = next();
+  title("Pedidos do período", y);
+  autoTable(doc, {
+    ...opts,
+    startY: y + 3,
+    head: [["Nº", "Data", "Cliente", "Total", "Custo", "Lucro", "Margem"]],
+    body: r.orders.map((o) => [String(o.number ?? ""), o.day.split("-").reverse().join("/"), o.customer, brl(o.total), brl(o.cost), brl(o.profit), pct(o.margin)]),
+    styles: { fontSize: 8 },
+    columnStyles: { 3: { halign: "right" }, 4: { halign: "right" }, 5: { halign: "right" }, 6: { halign: "right" } },
   });
 
   return doc.output("blob");
