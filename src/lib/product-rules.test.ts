@@ -39,3 +39,11 @@ describe("Sugestão de produto pelo nome do arquivo", () => {
     expect(matchFile("IMG_2024.jpg", ps)).toBeNull();
   });
 });
+describe("Tamanho e arredondamento ,90", () => {
+  it("Unitário com Tamanho e sem peso é válido", () => { const r = previewProducts([["Sucos","Laranja","","Unitário","",10,6,"","","300 ml"]],[])[0]; expect(r?.errors).toEqual([]); expect(r?.product.size_label).toBe("300 ml"); });
+  it("Unitário sem peso e sem tamanho é inválido", () => { expect(previewProducts([["Sucos","Laranja","","Unitário","",10,6]],[])[0]?.errors.length).toBeGreaterThan(0); });
+  it("arredonda venda para ,90 só quando a opção está ligada", () => {
+    expect(previewProducts([["A","B","","Por kg","",11.504,6]],[],{ round90: true })[0]?.product.sale_price).toBe(11.9);
+    expect(previewProducts([["A","B","","Por kg","",11.504,6]],[],{ round90: false })[0]?.product.sale_price).toBe(11.504);
+  });
+});
