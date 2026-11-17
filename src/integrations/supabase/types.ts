@@ -72,6 +72,13 @@ export type Database = {
             foreignKeyName: "order_items_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
+            referencedRelation: "catalog_products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
             referencedRelation: "products"
             referencedColumns: ["id"]
           },
@@ -79,6 +86,7 @@ export type Database = {
       }
       orders: {
         Row: {
+          client_ref: string | null
           created_at: string
           created_by: string | null
           customer_name: string
@@ -87,7 +95,9 @@ export type Database = {
           id: string
           notes: string
           number: number
+          origin: string
           profit: number
+          seen_at: string | null
           status: string
           total: number
           total_cost: number
@@ -96,6 +106,7 @@ export type Database = {
           whatsapp_status: string
         }
         Insert: {
+          client_ref?: string | null
           created_at?: string
           created_by?: string | null
           customer_name: string
@@ -104,7 +115,9 @@ export type Database = {
           id?: string
           notes?: string
           number?: never
+          origin?: string
           profit?: number
+          seen_at?: string | null
           status?: string
           total?: number
           total_cost?: number
@@ -113,6 +126,7 @@ export type Database = {
           whatsapp_status?: string
         }
         Update: {
+          client_ref?: string | null
           created_at?: string
           created_by?: string | null
           customer_name?: string
@@ -121,7 +135,9 @@ export type Database = {
           id?: string
           notes?: string
           number?: never
+          origin?: string
           profit?: number
+          seen_at?: string | null
           status?: string
           total?: number
           total_cost?: number
@@ -143,6 +159,7 @@ export type Database = {
           photo_url: string | null
           sale_price: number
           sale_type: string
+          size_label: string
           unit: string
           weight_g: number | null
         }
@@ -157,6 +174,7 @@ export type Database = {
           photo_url?: string | null
           sale_price?: number
           sale_type?: string
+          size_label?: string
           unit?: string
           weight_g?: number | null
         }
@@ -171,6 +189,7 @@ export type Database = {
           photo_url?: string | null
           sale_price?: number
           sale_type?: string
+          size_label?: string
           unit?: string
           weight_g?: number | null
         }
@@ -180,6 +199,7 @@ export type Database = {
         Row: {
           company_name: string
           id: number
+          logo_path: string | null
           txt_width: number
           updated_at: string
           whatsapp_number: string
@@ -187,6 +207,7 @@ export type Database = {
         Insert: {
           company_name?: string
           id?: number
+          logo_path?: string | null
           txt_width?: number
           updated_at?: string
           whatsapp_number?: string
@@ -194,6 +215,7 @@ export type Database = {
         Update: {
           company_name?: string
           id?: number
+          logo_path?: string | null
           txt_width?: number
           updated_at?: string
           whatsapp_number?: string
@@ -220,7 +242,60 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      catalog_products: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          description: string | null
+          id: string | null
+          name: string | null
+          photo_url: string | null
+          sale_price: number | null
+          size_label: string | null
+          unit: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          name?: string | null
+          photo_url?: string | null
+          sale_price?: number | null
+          size_label?: string | null
+          unit?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          name?: string | null
+          photo_url?: string | null
+          sale_price?: number | null
+          size_label?: string | null
+          unit?: string | null
+        }
+        Relationships: []
+      }
+      catalog_settings: {
+        Row: {
+          company_name: string | null
+          logo_path: string | null
+          whatsapp_number: string | null
+        }
+        Insert: {
+          company_name?: string | null
+          logo_path?: string | null
+          whatsapp_number?: string | null
+        }
+        Update: {
+          company_name?: string | null
+          logo_path?: string | null
+          whatsapp_number?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       admin_exists: { Args: never; Returns: boolean }
@@ -232,6 +307,17 @@ export type Database = {
           _notes: string
         }
         Returns: string
+      }
+      create_public_order: {
+        Args: {
+          _client_ref: string
+          _customer_name: string
+          _customer_phone: string
+          _hp?: string
+          _items: Json
+          _notes: string
+        }
+        Returns: Json
       }
       has_role: {
         Args: {
