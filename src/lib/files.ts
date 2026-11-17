@@ -29,7 +29,7 @@ export async function shareFile(blob: Blob, filename: string): Promise<boolean> 
 }
 
 /** Resize an image to max 800px on the longest side, as JPEG. */
-export async function resizeImage(file: File, max = 800, quality = 0.85): Promise<Blob> {
+export async function resizeImage(file: File, max = 800, quality = 0.85, type = "image/jpeg"): Promise<Blob> {
   const url = URL.createObjectURL(file);
   try {
     const img = new Image();
@@ -41,7 +41,7 @@ export async function resizeImage(file: File, max = 800, quality = 0.85): Promis
     c.height = Math.round(img.naturalHeight * scale);
     c.getContext("2d")!.drawImage(img, 0, 0, c.width, c.height);
     return await new Promise<Blob>((res, rej) =>
-      c.toBlob((b) => (b ? res(b) : rej(new Error("Falha ao processar imagem"))), "image/jpeg", quality),
+      c.toBlob((b) => (b ? res(b) : rej(new Error("Falha ao processar imagem"))), type, quality),
     );
   } finally {
     URL.revokeObjectURL(url);

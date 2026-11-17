@@ -14,6 +14,8 @@ import { createAdmin } from "@/lib/admin.functions";
 import { getWhatsappConfig } from "@/lib/whatsapp.functions";
 import { cn } from "@/lib/utils";
 import { InstallApp } from "@/components/InstallApp";
+import { resizeImage } from "@/lib/files";
+import { fetchLogoUrl } from "@/lib/brand";
 
 export const Route = createFileRoute("/_authenticated/configuracoes")({
   head: () => ({ meta: [{ title: "Configurações — DoraFacilities APP" }, { name: "description", content: "Configurações da empresa e instalação do Dora Facilities." }, { property: "og:title", content: "Configurações — DoraFacilities APP" }, { property: "og:description", content: "Configurações da empresa e instalação do Dora Facilities." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
@@ -33,6 +35,28 @@ function SettingsPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
+  const logo = useQuery({ queryKey: ["logo-url", settings.data?.logo_path ?? null], queryFn: fetchLogoUrl, enabled: settings.isSuccess });
+  const [logoBusy, setLogoBusy] = useState(false);
+
+  async function uploadLogo(file?: File) {
+    if (!file) return;
+    if (!["image/png", "image/webp"].includes(file.type)) { toast.error("Escolha uma imagem PNG ou WebP"); return; }
+    setLogoBusy(true);
+    try {
+      const blob = await resizeImage(file, 600, 0.9, "image/webp");
+      const path = `logo-${Date.now()}.webp`;
+      const up = await supabase.storage.from("brand").upload(path, blob, { contentType: "image/webp" });
+      if (up.error) throw up.error;
+      const old = settings.data?.logo_path;
+      const { error } = await supabase.from("settings").update({ logo_path: path, updated_at: new Date().toISOString() }).eq("id", 1);
+      if (error) throw error;
+      if (old) await supabase.storage.from("brand").remove([old]);
+      toast.success("Logo salva");
+      await qc.invalidateQueries({ queryKey: ["settings"] });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Não foi possível enviar a logo");
+    } finally { setLogoBusy(false); }
+  }
 
   useEffect(() => {
     if (!settings.data) return;
@@ -99,6 +123,15 @@ function SettingsPage() {
           </div>
         </div>
         <Button className="h-12 w-full text-base" onClick={save}>Salvar</Button>
+      </section>
+
+      <section className="mt-3 space-y-3 rounded-xl border bg-card p-4">
+        <h2 className="font-bold">Logo da empresa</h2>
+        {logo.data ? <img src={logo.data} alt="Logo da empresa" className="mx-auto max-h-32 object-contain" /> : <p className="text-sm text-muted-foreground">Nenhuma logo enviada. Use PNG ou WebP.</p>}
+        <label className="flex h-12 w-full cursor-pointer items-center justify-center rounded-md border font-semibold">
+          {logoBusy ? "Enviando..." : settings.data?.logo_path ? "Trocar logo" : "Escolher logo"}
+          <input type="file" accept="image/png,image/webp" hidden disabled={logoBusy} onChange={(e) => { uploadLogo(e.target.files?.[0]); e.target.value = ""; }} />
+        </label>
       </section>
 
       <section className="mt-3 space-y-2 rounded-xl border bg-card p-4">

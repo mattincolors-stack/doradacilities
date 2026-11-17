@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { bootstrapAdmin } from "@/lib/admin.functions";
+import { fetchLogoUrl } from "@/lib/brand";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -32,8 +33,10 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
+  const [logo, setLogo] = useState<string | null>(null);
 
   useEffect(() => {
+    fetchLogoUrl().then(setLogo).catch(() => setLogo(null));
     supabase.rpc("admin_exists").then(({ data }) => setHasAdmin(Boolean(data)));
     supabase.auth.getUser().then(({ data }) => {
       if (data.user && !erro) navigate({ to: "/pedidos", replace: true });
@@ -63,8 +66,9 @@ function AuthPage() {
   return (
     <div className="flex min-h-screen flex-col justify-center bg-primary px-5 py-10">
       <div className="mx-auto w-full max-w-sm">
+        {logo ? <img src={logo} alt="Dora Facilities" decoding="async" fetchPriority="high" className="mx-auto max-h-[160px] w-auto object-contain" onError={() => setLogo(null)} /> : <>
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary-foreground/70">Dora Facilities</p>
-        <h1 className="mt-1 text-3xl font-extrabold text-primary-foreground">DoraFacilities APP</h1>
+        <h1 className="mt-1 text-3xl font-extrabold text-primary-foreground">DoraFacilities APP</h1></>}
         <form onSubmit={submit} className="mt-8 space-y-4 rounded-2xl bg-card p-6 shadow-xl">
           <div>
             <h2 className="text-lg font-bold">{first ? "Criar primeiro administrador" : "Entrar"}</h2>
