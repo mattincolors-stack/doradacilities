@@ -7,4 +7,6 @@
 - [x] Importar produtos com preço de imp.xlsx preservando as regras atuais e os produtos existentes
 - [x] Fotos: filtro "Sem foto" com contador e envio em lote com sugestão pelo nome do arquivo
 - [x] Relatórios: variação vs período anterior, gráfico diário, por categoria, pedidos, alerta de custo zerado, XLSX e PDF ampliado
+- [x] Catálogo público etapa 1: base, regra ,90, Tamanho na importação, logo
+- [ ] Catálogo público etapas 2 e 3 (aguarda o usuário)
 - [ ] Credenciais da API oficial do WhatsApp (aguarda o usuário)
