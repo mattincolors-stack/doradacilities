@@ -14,3 +14,5 @@
 - Order item descriptions and weights are snapshotted by an insert trigger, preserving historical orders when products change.
 - XLSX processing uses a dynamically imported ExcelJS browser library and only the first worksheet; categories remain product text values to preserve the existing schema.
 - Offline support uses generated Workbox via vite-plugin-pwa and a single preview-safe registration wrapper; do not cache authenticated API responses or add offline mutations.
+- Public catalog reads only the `catalog_products`/`catalog_settings` owner-rights views and writes only via `create_public_order`; base tables stay admin-only so cost never leaks.
+- The `brand` bucket is private (workspace blocks public buckets) with a public read policy; logos are served by signed URL via `src/lib/brand.ts`.
